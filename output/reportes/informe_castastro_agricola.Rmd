@@ -1,0 +1,92 @@
+---
+title: "catastro_agricola"
+author: "AJ"
+date: "22-09-2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readxl)
+library(tidyverse)
+library(lubridate)
+library(plotly)
+
+```
+
+```{r}
+in.rds<-"output/rds"
+
+dir(in.rds, pattern ="cultivos_superficie_especie", full.names = T ) %>%
+  read_rds()->cultivos_superficie
+
+dir(in.rds, pattern ="frutales_superficie", full.names = T ) %>%
+  read_rds()->frutales_superficie
+
+
+
+## Vizualizacion cultivos
+
+## regiones
+cultivos_superficie %>%
+  group_by(nom_region, año, especie) %>%
+  filter(nom_region %in% c("maule","ñuble")) %>%
+  ggplot(aes(especie,superficie_ha, fill=especie)) +
+  #scale_color_brewer(palette = 'Spectral')+
+  geom_col()+ 
+  facet_grid(nom_region~año)+
+  #theme_bw()+
+  theme(axis.text.x =  element_blank(),
+        legend.position = "bottom")->cul.col.sup
+
+cul.col.sup
+
+
+
+
+## Vizualizacion frutales
+frutales_superficie %>%
+  group_by(nom_region, año, especie) %>%
+  summarise(superficie_ha=sum(superficie_ha, na.rm = T)) %>%
+  filter(nom_region %in% c("maule","ñuble")) %>%
+  ggplot(aes(especie,superficie_ha, fill=especie)) +
+  #scale_color_brewer(palette = 'Spectral')+
+  geom_col()+ 
+  facet_grid(nom_region~año)+
+  #theme_bw()+
+  theme(axis.text.x =  element_blank(),
+        legend.position = "bottom")->fru.col.sup
+
+plotly::ggplotly(fru.col.sup)
+
+
+# rendimiento %>%
+#   group_by(Regi?n, A?o, Especie) %>%
+#   summarise(`ton/ha`=sum(`kg/ha`, na.rm=T)/1000) %>%
+#   filter(Regi?n %in% c("Maule","?uble")) %>%
+#   ggplot(aes(Especie,`ton/ha`, fill=Especie)) +
+#   geom_col()+ 
+#   facet_grid(Regi?n~A?o)+
+#   theme(axis.text.x = element_text(angle=90,  hjust = 1),
+#         legend.position = "bottom")
+#   
+# 
+# ## comunas
+# 
+# superficie %>%
+#   filter(Comuna=="CAUQUENES") %>%
+#   filter(Regi?n %in% c("Maule")) %>%
+#   ggplot(aes(Especie,Superficie_ha, fill=Especie)) +
+#   #scale_color_brewer(palette = 'Spectral')+
+#   geom_col()+ 
+#   facet_grid(Comuna~A?o)+
+#   #theme_bw()+
+#   theme(axis.text.x =  element_blank(),
+#         legend.position = "bottom")
+
+
+```
+

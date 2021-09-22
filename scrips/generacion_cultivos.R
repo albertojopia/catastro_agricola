@@ -5,9 +5,8 @@ library(lubridate)
 library(plotly)
 
 
-
-rutas<-"E:/ALBERtO/HEMERA/PROYECtO/CAtAStRO_AGRICOLA/datos/excel"
-out.rds<-"E:/ALBERtO/HEMERA/PROYECtO/CAtAStRO_AGRICOLA/output/rds"
+rutas<-"datos/excel"
+out.rds<-"output/rds"
 
 
 ## Datos de Superficie ----
@@ -44,7 +43,7 @@ superficie[1:357,] %>%
   gather(variedad, superficie_ha, -año ,-año_agrícola, -cod_region, -nom_region) %>%
   separate(., col=variedad, into = c("especie", "variedad"), sep="_")-> superficie_variedad
 
-superfice_variedad[c("año", "año_agrícola","cod_region", "nom_region", "especie", "variedad", "superficie_ha")]-> superficie_variedad
+superficie_variedad[c("año", "año_agrícola","cod_region", "nom_region", "especie", "variedad", "superficie_ha")]-> superficie_variedad
 
 superficie_variedad %>% 
   group_by(año, año_agrícola, cod_region, nom_region, especie) %>%
@@ -52,7 +51,9 @@ superficie_variedad %>%
 
 #revisar
 superficie_variedad$especie %>% unique()
-rendimiento_variedad$variedad %>% unique()
+superficie_variedad$variedad %>% unique()
+
+superficie_especie$especie %>% unique()
 
 superficie_variedad%>%
   filter(especie=="tomate")
@@ -176,3 +177,4 @@ productividad_variedad %>%
 setwd(out.rds)
 write_rds(productividad_especie , "cultivos_productividad_especie.rds")
 write_rds(productividad_variedad ,"cultivos_productividad_variedad.rds")
+
