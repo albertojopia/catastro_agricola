@@ -24,29 +24,29 @@ grep(pattern = "total", names(superficie), value=T) # especies con varriedades
 
 #organizacion y homogeneizacion 
 superficie[1:357,] %>% 
-  filter(región!="") %>% # filtrar las filas vacias y los comentarios extras al final de del campo Año s
+  filter(regiÃ³n!="") %>% # filtrar las filas vacias y los comentarios extras al final de del campo aÃ±o s
   select(c(1:stop.col), -total) %>%
-  separate(., col=región,into = c("cod_region", "nom_region"), sep=2 ) %>%
+  separate(., col=regiÃ³n,into = c("cod_region", "nom_region"), sep=2 ) %>%
   mutate_at(vars(4:ncol(.)), extract_numeric) %>% 
   mutate_if(is.character, tolower)%>%
   mutate_if(is.character, str_trim) %>%
-  mutate(año=parse_number(año_agrícola)) %>%
-  mutate(año=year(parse_date(as.character(año), format="%Y"))) %>% 
+  mutate(aÃ±o=parse_number(aÃ±o_agrÃ­cola)) %>%
+  mutate(aÃ±o=year(parse_date(as.character(aÃ±o), format="%Y"))) %>% 
   
   #identificacion de las especies de cultivos clasificados con variedades y las que no, se indica como "noidentificada" a las especies donde su variedad no es informada
-  rename_at(., vars(!contains(c("trigo", "cebada", "maíz", "lupino")), -(c(año_agrícola:nom_region, año ))),  list( ~paste0(., "_noidentificada") )) %>%
+  rename_at(., vars(!contains(c("trigo", "cebada", "maÃ­z", "lupino")), -(c(aÃ±o_agrÃ­cola:nom_region, aÃ±o ))),  list( ~paste0(., "_noidentificada") )) %>%
   mutate(trigo_noidentificada=if_else(is.na(trigo_harinero)==TRUE & is.na(trigo_candeal)==TRUE,trigo_total, 0 )) %>% 
   mutate(cebada_noidentificada=if_else(is.na(cebada_cervecera)==TRUE & is.na(cebada_forrajera)==TRUE,cebada_total, 0 )) %>%
-  mutate(maíz_noidentificada=if_else(is.na(maíz_consumo)==TRUE & is.na(maíz_semilla)==TRUE,maíz_total, 0 )) %>%
+  mutate(maÃ­z_noidentificada=if_else(is.na(maÃ­z_consumo)==TRUE & is.na(maÃ­z_semilla)==TRUE,maÃ­z_total, 0 )) %>%
   mutate(lupino_noidentificada=if_else(is.na(lupino_amargo)==TRUE & is.na(lupino_australiano)==TRUE & is.na(lupino_dulce)==TRUE & is.na(lupinos_otros)==TRUE  ,lupino_total, 0 )) %>%
   select_at(., vars(!contains("total"))) %>%
-  gather(variedad, superficie_ha, -año ,-año_agrícola, -cod_region, -nom_region) %>%
+  gather(variedad, superficie_ha, -aÃ±o ,-aÃ±o_agrÃ­cola, -cod_region, -nom_region) %>%
   separate(., col=variedad, into = c("especie", "variedad"), sep="_")-> superficie_variedad
 
-superficie_variedad[c("año", "año_agrícola","cod_region", "nom_region", "especie", "variedad", "superficie_ha")]-> superficie_variedad
+superficie_variedad[c("aÃ±o", "aÃ±o_agrÃ­cola","cod_region", "nom_region", "especie", "variedad", "superficie_ha")]-> superficie_variedad
 
 superficie_variedad %>% 
-  group_by(año, año_agrícola, cod_region, nom_region, especie) %>%
+  group_by(aÃ±o, aÃ±o_agrÃ­cola, cod_region, nom_region, especie) %>%
   summarise(superficie_ha=sum(superficie_ha, na.rm = T)) ->superficie_especie
 
 #revisar
@@ -82,31 +82,31 @@ grep(pattern = "total", names(rendimiento), value=T) # especies con varriedades
 
 #organizacion y homogeneizacion 
 rendimiento[1:355,] %>% 
-  filter(región!="") %>% # filtrar las filas vacias y los comentarios extras al final de del campo Año s
+  filter(regiÃ³n!="") %>% # filtrar las filas vacias y los comentarios extras al final de del campo aÃ±o s
   select(c(1:stop.col)) %>%
-  separate(., col=región,into = c("cod_region", "nom_region"), sep=2 ) %>%
+  separate(., col=regiÃ³n,into = c("cod_region", "nom_region"), sep=2 ) %>%
   mutate_at(vars(4:ncol(.)), extract_numeric) %>% 
   mutate_if(is.character, tolower)%>%
   mutate_if(is.character, str_trim) %>%
-  mutate(año=parse_number(año_agrícola)) %>%
-  mutate(año=year(parse_date(as.character(año), format="%Y"))) %>% 
+  mutate(aÃ±o=parse_number(aÃ±o_agrÃ­cola)) %>%
+  mutate(aÃ±o=year(parse_date(as.character(aÃ±o), format="%Y"))) %>% 
   
   #identificacion de las especies de cultivos clasificados con variedades y las que no, se indica como "noidentificada" a las especies donde su variedad no es informada
-  rename_at(., vars(!contains(c("trigo", "cebada", "maíz", "poroto","lupino")), -(c(año_agrícola:nom_region, año ))),  list( ~paste0(., "_noidentificada") )) %>%
+  rename_at(., vars(!contains(c("trigo", "cebada", "maÃ­z", "poroto","lupino")), -(c(aÃ±o_agrÃ­cola:nom_region, aÃ±o ))),  list( ~paste0(., "_noidentificada") )) %>%
   mutate(trigo_noidentificada=if_else(is.na(trigo_harinero)==TRUE & is.na(trigo_candeal)==TRUE,trigo_total, 0 )) %>% 
   mutate(cebada_noidentificada=if_else(is.na(cebada_cervecera)==TRUE & is.na(cebada_forrajera)==TRUE,cebada_total, 0 )) %>%
-  mutate(maíz_noidentificada=if_else(is.na(maíz_consumo)==TRUE & is.na(maíz_semilla)==TRUE,maíz_total, 0 )) %>%
+  mutate(maÃ­z_noidentificada=if_else(is.na(maÃ­z_consumo)==TRUE & is.na(maÃ­z_semilla)==TRUE,maÃ­z_total, 0 )) %>%
   mutate(lupino_noidentificada=if_else(is.na(lupino_amargo)==TRUE & is.na(lupino_australiano)==TRUE & is.na('lupino_australiano y dulce')==TRUE  ,lupino_total, 0 )) %>%
-  mutate(poroto_noidentificada=if_else(is.na(poroto_consumo)==TRUE & is.na(poroto_exportación)==TRUE,poroto_total, 0 )) %>%
+  mutate(poroto_noidentificada=if_else(is.na(poroto_consumo)==TRUE & is.na(poroto_exportaci?n)==TRUE,poroto_total, 0 )) %>%
   select_at(., vars(!contains("total"))) %>%
-  gather(variedad, rendimiento_ton_ha, -año ,-año_agrícola, -cod_region, -nom_region) %>%
+  gather(variedad, rendimiento_ton_ha, -aÃ±o ,-aÃ±o_agrÃ­cola, -cod_region, -nom_region) %>%
   mutate(rendimiento_ton_ha=rendimiento_ton_ha/10) %>% #los valores se encuntran en quintales: 1qq=100 kg
   separate(., col=variedad, into = c("especie", "variedad"), sep="_")-> rendimiento_variedad
 
-rendimiento_variedad[c("año", "año_agrícola","cod_region", "nom_region", "especie", "variedad", "rendimiento_ton_ha")]-> rendimiento_variedad
+rendimiento_variedad[c("aÃ±o", "aÃ±o_agrÃ­cola","cod_region", "nom_region", "especie", "variedad", "rendimiento_ton_ha")]-> rendimiento_variedad
 
 rendimiento_variedad %>% 
-  group_by(año, año_agrícola, cod_region, nom_region, especie) %>%
+  group_by(aÃ±o, aÃ±o_agrÃ­cola, cod_region, nom_region, especie) %>%
   summarise(rendimiento_ton_ha=sum(rendimiento_ton_ha, na.rm = T)) ->rendimiento_especie
 
 
@@ -139,30 +139,30 @@ grep(pattern = "total", names(productividad), value=T) # especies con varriedade
 #organizacion y homogeneizacion 
 tail(productividad[1:355,])
 productividad[1:355,] %>% 
-  filter(región!="") %>% # filtrar las filas vacias y los comentarios extras al final de del campo Año s
+  filter(regiÃ³n!="") %>% # filtrar las filas vacias y los comentarios extras al final de del campo aÃ±o s
   select(c(1:stop.col)) %>%
-  separate(., col=región,into = c("cod_region", "nom_region"), sep=2 ) %>%
+  separate(., col=regiÃ³n,into = c("cod_region", "nom_region"), sep=2 ) %>%
   mutate_at(vars(4:ncol(.)), extract_numeric) %>% 
   mutate_if(is.character, tolower)%>%
   mutate_if(is.character, str_trim) %>%
-  mutate(año=parse_number(año_agrícola)) %>%
-  mutate(año=year(parse_date(as.character(año), format="%Y"))) %>% 
+  mutate(aÃ±o=parse_number(aÃ±o_agrÃ­cola)) %>%
+  mutate(aÃ±o=year(parse_date(as.character(aÃ±o), format="%Y"))) %>% 
   
   #identificacion de las especies de cultivos clasificados con variedades y las que no, se indica como "noidentificada" a las especies donde su variedad no es informada
-  rename_at(., vars(!contains(c("trigo", "cebada", "maíz", "poroto","lupino")), -(c(año_agrícola:nom_region, año ))),  list( ~paste0(., "_noidentificada") )) %>%
+  rename_at(., vars(!contains(c("trigo", "cebada", "maÃ­z", "poroto","lupino")), -(c(aÃ±o_agrÃ­cola:nom_region, aÃ±o ))),  list( ~paste0(., "_noidentificada") )) %>%
   mutate(trigo_noidentificada=if_else(is.na(trigo_harinero)==TRUE & is.na(trigo_candeal)==TRUE,trigo_total, 0 )) %>% 
   mutate(cebada_noidentificada=if_else(is.na(cebada_cervecera)==TRUE & is.na(cebada_forrajera)==TRUE,cebada_total, 0 )) %>%
-  mutate(maíz_noidentificada=if_else(is.na(maíz_consumo)==TRUE & is.na(maíz_semilla)==TRUE,maíz_total, 0 )) %>%
+  mutate(maÃ­z_noidentificada=if_else(is.na(maÃ­z_consumo)==TRUE & is.na(maÃ­z_semilla)==TRUE,maÃ­z_total, 0 )) %>%
   mutate(lupino_noidentificada=if_else(is.na(lupino_amargo)==TRUE & is.na('lupino_australiano y dulce')==TRUE  ,lupino_total, 0 )) %>%
-  mutate(poroto_noidentificada=if_else(is.na(poroto_consumo)==TRUE & is.na(poroto_exportación)==TRUE,poroto_total, 0 ))  %>%
+  mutate(poroto_noidentificada=if_else(is.na(poroto_consumo)==TRUE & is.na(poroto_exportaci?n)==TRUE,poroto_total, 0 ))  %>%
   select_at(., vars(!contains("total"))) %>%
-  gather(variedad, productividad_ton_ha, -año ,-año_agrícola, -cod_region, -nom_region) %>%
+  gather(variedad, productividad_ton_ha, -aÃ±o ,-aÃ±o_agrÃ­cola, -cod_region, -nom_region) %>%
   separate(., col=variedad, into = c("especie", "variedad"), sep="_")-> productividad_variedad
 
-productividad_variedad[c("año", "año_agrícola","cod_region", "nom_region", "especie", "variedad", "productividad_ton_ha")]-> productividad_variedad
+productividad_variedad[c("aÃ±o", "aÃ±o_agrÃ­cola","cod_region", "nom_region", "especie", "variedad", "productividad_ton_ha")]-> productividad_variedad
 
 productividad_variedad %>% 
-  group_by(año, año_agrícola, cod_region, nom_region, especie) %>%
+  group_by(aÃ±o, aÃ±o_agrÃ­cola, cod_region, nom_region, especie) %>%
   summarise(productividad_ton_ha=sum(productividad_ton_ha, na.rm = T)) ->productividad_especie
 
 
