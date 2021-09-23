@@ -17,76 +17,132 @@ library(plotly)
 
 ```
 
-```{r}
-in.rds<-"output/rds"
+```{r leer datos, include=FALSE}
+#in.rds<-"../output/rds"
+in.rds<-"E:/ALBERTO/HEMERA/GITHUB/catastro_agricola/output/rds"
 
 dir(in.rds, pattern ="cultivos_superficie_especie", full.names = T ) %>%
   read_rds()->cultivos_superficie
 
+dir(in.rds, pattern ="cultivos_rendimiento_especie", full.names = T ) %>%
+  read_rds()->cultivos_rendimiento
+
 dir(in.rds, pattern ="frutales_superficie", full.names = T ) %>%
   read_rds()->frutales_superficie
 
+dir(in.rds, pattern ="frutales_rendimiento", full.names = T ) %>%
+  read_rds()->frutales_rendimiento
+```
+
+# Indice  {.tabset}
+
+## Cultivos  {.tabset}
+
+### Region
+
+#### Superficie
+```{r, echo=FALSE, message = FALSE}
+#superficie
+cultivos_superficie %>%
+    filter(especie %in% c("trigo", "maíz")) %>%
+    filter(año>year("1999-01-01")) %>%
+    ggplot(aes(año,superficie_ha, fill=especie)) +
+      geom_col(position = "dodge")+
+      facet_wrap(~nom_region)+
+      theme_bw()+
+      theme(axis.text.x =   element_text(angle=90),
+           legend.position = "bottom")
+
+```
+
+#### Rendimiento 
+```{r, echo=FALSE, message = FALSE}
+#rendimiento
+cultivos_rendimiento %>%
+    filter(especie %in% c("trigo", "maíz")) %>%
+    filter(año>year("1999-01-01")) %>%
+    ggplot(aes(año,rendimiento_ton_ha, fill=especie)) +
+      geom_col(position = "dodge")+
+      facet_wrap(~nom_region)+
+      theme_bw()+
+      theme(axis.text.x =   element_text(angle=90),
+            legend.position = "bottom")
+```
 
 
-## Vizualizacion cultivos
+## Frutales  {.tabset}
+### Region 
+
+#### Superficie
+```{r, echo=FALSE,message = FALSE}
+## Vizualizacion frutales
 
 ## regiones
-cultivos_superficie %>%
-  group_by(nom_region, año, especie) %>%
-  filter(nom_region %in% c("maule","ñuble")) %>%
-  ggplot(aes(especie,superficie_ha, fill=especie)) +
-  #scale_color_brewer(palette = 'Spectral')+
-  geom_col()+ 
-  facet_grid(nom_region~año)+
-  #theme_bw()+
-  theme(axis.text.x =  element_blank(),
-        legend.position = "bottom")->cul.col.sup
-
-cul.col.sup
-
-
-
-
-## Vizualizacion frutales
+#superficie
 frutales_superficie %>%
   group_by(nom_region, año, especie) %>%
   summarise(superficie_ha=sum(superficie_ha, na.rm = T)) %>%
-  filter(nom_region %in% c("maule","ñuble")) %>%
-  ggplot(aes(especie,superficie_ha, fill=especie)) +
-  #scale_color_brewer(palette = 'Spectral')+
-  geom_col()+ 
-  facet_grid(nom_region~año)+
-  #theme_bw()+
-  theme(axis.text.x =  element_blank(),
-        legend.position = "bottom")->fru.col.sup
+  filter(especie %in% c("kiwi", "cerezo")) %>%
+  filter(año>year("1999-01-01")) %>%
+  ggplot(aes(año,superficie_ha, fill=especie)) +
+    geom_col(position = "dodge")+
+    facet_wrap(~nom_region)+
+    theme_bw()+
+    theme(axis.text.x =   element_text(angle=90),
+          legend.position = "bottom")
 
-plotly::ggplotly(fru.col.sup)
+```
 
-
-# rendimiento %>%
-#   group_by(Regi?n, A?o, Especie) %>%
-#   summarise(`ton/ha`=sum(`kg/ha`, na.rm=T)/1000) %>%
-#   filter(Regi?n %in% c("Maule","?uble")) %>%
-#   ggplot(aes(Especie,`ton/ha`, fill=Especie)) +
-#   geom_col()+ 
-#   facet_grid(Regi?n~A?o)+
-#   theme(axis.text.x = element_text(angle=90,  hjust = 1),
-#         legend.position = "bottom")
-#   
-# 
-# ## comunas
-# 
-# superficie %>%
-#   filter(Comuna=="CAUQUENES") %>%
-#   filter(Regi?n %in% c("Maule")) %>%
-#   ggplot(aes(Especie,Superficie_ha, fill=Especie)) +
-#   #scale_color_brewer(palette = 'Spectral')+
-#   geom_col()+ 
-#   facet_grid(Comuna~A?o)+
-#   #theme_bw()+
-#   theme(axis.text.x =  element_blank(),
-#         legend.position = "bottom")
+#### Rendimiento
+```{r}
+#rendimiento
+frutales_rendimiento %>%
+  group_by(nom_region, año, especie) %>%
+  summarise(rendimiento_ton_ha=sum(rendimiento_ton_ha, na.rm = T)) %>%
+  filter(especie %in% c("kiwi", "cerezo")) %>%
+  filter(año>year("1999-01-01")) %>%
+  ggplot(aes(año,rendimiento_ton_ha, fill=especie)) +
+    geom_col(position = "dodge")+
+    facet_wrap(~nom_region)+
+    theme_bw()+
+    theme(axis.text.x =   element_text(angle=90),
+          legend.position = "bottom")
+```
 
 
+### Comunas
+
+#### Superficie
+```{r, echo=FALSE,message = FALSE}
+
+## comunas
+#superficie
+frutales_superficie %>%
+  filter(nom_region=="o'higgins") %>%
+  filter(especie %in% c("kiwi", "cerezo")) %>%
+  filter(año>year("1999-01-01")) %>%
+  ggplot(aes(año,superficie_ha, fill=especie)) +
+    geom_col(position = "dodge")+
+    facet_wrap(~comuna)+
+    theme_bw()+
+    theme(axis.text.x =   element_text(angle=90),
+          legend.position = "bottom")
+
+```
+
+#### Rendimiento
+```{r,  echo=FALSE,message = FALSE}
+
+#rendimiento
+frutales_rendimiento %>%
+  filter(nom_region=="o'higgins") %>%
+  filter(especie %in% c("kiwi", "cerezo")) %>%
+  filter(año>year("1999-01-01")) %>%
+  ggplot(aes(año,rendimiento_ton_ha, fill=especie)) +
+    geom_col(position = "dodge")+
+    facet_wrap(~comuna)+
+    theme_bw()+
+    theme(axis.text.x =   element_text(angle=90),
+          legend.position = "bottom")
 ```
 
